@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Matemáticas Divertidas en VR</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <!-- Google Fonts: Fredoka One for a playful vibe -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Fredoka One', cursive;
+      background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    /* Smooth scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Hero section animation */
+    .hero {
+      background: linear-gradient(to bottom, rgba(37, 99, 235, 0.9), rgba(96, 165, 250, 0.7)),
+                  url('https://source.unsplash.com/random/1600x900/?math') no-repeat center/cover;
+      animation: fadeIn 1s ease-out;
+    }
+
+    /* Card animations */
+    .game-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .game-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 25px rgba(96, 165, 250, 0.7);
+    }
+
+    /* Shine effect for cards */
+    .game-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+      );
+      transform: rotate(25deg);
+      animation: shine 3s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(25deg); }
+      100% { transform: translateX(100%) rotate(25deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Fade-in for sections */
+    section {
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background-color: #60a5fa;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="bg-blue-600 text-white fixed top-0 left-0 right-0 z-50 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center p-4">
+      <div class="flex items-center gap-3">
+        <i class="fas fa-gamepad text-3xl"></i>
+        <h1 class="text-2xl md:text-3xl font-bold">Matemáticas Divertidas en VR</h1>
+      </div>
+      <nav class="flex items-center gap-4">
+        <a href="#features" class="hover:text-yellow-300 transition">Características</a>
+        <a href="#how-to" class="hover:text-yellow-300 transition">Cómo Usar</a>
+        <a href="pages/login.html" class="bg-yellow-400 text-blue-800 px-4 py-2 rounded-full hover:bg-yellow-500 transition flex items-center gap-2">
+          <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero text-white pt-24 pb-16 text-center">
+    <div class="container mx-auto px-6">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">¡Aprende Matemáticas con Diversión!</h2>
+      <p class="text-lg md:text-xl mb-6 max-w-2xl mx-auto">
+        Únete a la aventura en realidad virtual y descubre sumas, fracciones y geometría en un mundo interactivo diseñado para niños de tercer grado.
+      </p>
+      <a href="pages/login.html" class="bg-yellow-400 text-blue-800 px-6 py-3 rounded-full text-lg font-semibold hover:bg-yellow-500 transition inline-flex items-center gap-2">
+        <i class="fas fa-rocket"></i> ¡Comienza Ahora!
+      </a>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features" class="container mx-auto p-6">
+    <h2 class="text-3xl font-semibold text-blue-600 mb-6 text-center">
+      <i class="fas fa-star text-yellow-400 mr-2"></i> Características Principales
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Game Card 1 -->
+      <div class="game-card bg-white rounded-lg shadow-lg p-6 relative overflow-hidden">
+        <i class="fas fa-calculator text-4xl text-blue-600 mb-4"></i>
+        <h3 class="text-xl font-bold text-blue-600 mb-2">Juegos Interactivos</h3>
+        <p class="text-gray-700 mb-4">
+          Juega a "Caza de Números", "Aventura de Fracciones" y más, resolviendo problemas matemáticos en entornos dinámicos.
+        </p>
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <i class="fas fa-clock"></i> Tiempo: 5-10 min
+          <i class="fas fa-star"></i> Popularidad: ★★★★☆
+        </div>
+      </div>
+      <!-- Game Card 2 -->
+      <div class="game-card bg-white rounded-lg shadow-lg p-6 relative overflow-hidden">
+        <i class="fas fa-vr-cardboard text-4xl text-blue-600 mb-4"></i>
+        <h3 class="text-xl font-bold text-blue-600 mb-2">Realidad Virtual</h3>
+        <p class="text-gray-700 mb-4">
+          Experimenta matemáticas en 3D con entornos inmersivos que hacen el aprendizaje más emocionante.
+        </p>
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <i class="fas fa-clock"></i> Tiempo: 8-12 min
+          <i class="fas fa-star"></i> Popularidad: ★★★★★
+        </div>
+      </div>
+      <!-- Game Card 3 -->
+      <div class="game-card bg-white rounded-lg shadow-lg p-6 relative overflow-hidden">
+        <i class="fas fa-smile text-4xl text-blue-600 mb-4"></i>
+        <h3 class="text-xl font-bold text-blue-600 mb-2">Diseño Amigable</h3>
+        <p class="text-gray-700 mb-4">
+          Colores vibrantes y personajes divertidos para mantener a los niños motivados y felices.
+        </p>
+        <div class="flex items-center gap-2 text-sm text-gray-600">
+          <i class="fas fa-clock"></i> Tiempo: 5-8 min
+          <i class="fas fa-star"></i> Popularidad: ★★★★☆
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Use Section -->
+  <section id="how-to" class="container mx-auto p-6 bg-white rounded-lg shadow-lg">
+    <h2 class="text-3xl font-semibold text-blue-600 mb-6 text-center">
+      <i class="fas fa-book-open text-yellow-400 mr-2"></i> Cómo Usar el Sistema
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <ol class="list-decimal pl-6 text-gray-700 space-y-2">
+          <li><strong>Inicia Sesión:</strong> Usa tu cuenta para acceder al dashboard.</li>
+          <li><strong>Elige un Juego:</strong> Selecciona entre sumas, fracciones, geometría y más.</li>
+          <li><strong>Explora en VR:</strong> Usa un navegador compatible con WebXR (Chrome, Firefox).</li>
+          <li><strong>¡D maticas!</strong> Aprende mientras te diviertes en entornos interactivos.</li>
+        </ol>
+      </div>
+      <div class="text-gray-700">
+        <p class="mb-4">
+          <strong>Requisitos para VR:</strong> Recomendamos dispositivos como Oculus Quest o cualquier visor compatible con WebXR. Asegúrate de usar un navegador actualizado.
+        </p>
+        <p>
+          <strong>Consejo:</strong> Configura un espacio seguro para la experiencia en realidad virtual y supervisa a los niños mientras juegan.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="container mx-auto p-6 text-center">
+    <h2 class="text-3xl font-semibold text-blue-600 mb-6">
+      <i class="fas fa-chart-line text-yellow-400 mr-2"></i> Impacto del Aprendizaje
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-blue-50 rounded-lg p-4">
+        <i class="fas fa-users text-3xl text-blue-600 mb-2"></i>
+        <p class="text-2xl font-bold text-blue-600">+10,000</p>
+        <p class="text-gray-700">Niños aprendiendo</p>
+      </div>
+      <div class="bg-blue-50 rounded-lg p-4">
+        <i class="fas fa-gamepad text-3xl text-blue-600 mb-2"></i>
+        <p class="text-2xl font-bold text-blue-600">15</p>
+        <p class="text-gray-700">Juegos disponibles</p>
+      </div>
+      <div class="bg-blue-50 rounded-lg p-4">
+        <i class="fas fa-star text-3xl text-blue-600 mb-2"></i>
+        <p class="text-2xl font-bold text-blue-600">4.8/5</p>
+        <p class="text-gray-700">Satisfacción</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-blue-600 text-white p-6 mt-6">
+    <div class="container mx-auto text-center">
+      <div class="flex justify-center gap-4 mb-4">
+        <a href="#" class="text-yellow-300 hover:text-yellow-400"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="text-yellow-300 hover:text-yellow-400"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="text-yellow-300 hover:text-yellow-400"><i class="fab fa-instagram"></i></a>
+      </div>
+      <p>© 2025 Matemáticas Divertidas en VR. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Placeholder logout function (for dashboard integration)
+    async function logout() {
+      try {
+        // Notify backend to invalidate session (adjust endpoint as needed)
+        const response = await fetch('/api/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token') || ''}`
+          },
+          credentials: 'include'
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al cerrar sesión');
+        }
+
+        // Clear client-side session data
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        sessionStorage.clear();
+
+        // Redirect to login page
+        window.location.href = 'pages/login.html';
+      } catch (error) {
+        console.error('Error durante el logout:', error);
+        alert('Hubo un problema al cerrar sesión. Por favor, intenta de nuevo.');
+      }
+    }
+  </script>
+</body>
+</html>

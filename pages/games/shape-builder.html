@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Constructor de Figuras - Matemáticas en VR</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-super-hands-component@3.0.1/dist/aframe-super-hands-component.min.js"></script>
+  <script src="https://unpkg.com/aframe-physics-system@4.0.1/dist/aframe-physics-system.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; }
+    #ui-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body class="bg-blue-100">
+
+  <div class="absolute top-4 right-4">
+    <a href="../dashboard.html" class="bg-yellow-400 text-blue-800 px-4 py-2 rounded hover:bg-yellow-500">Volver al Dashboard</a>
+  </div>
+
+  <!-- UI -->
+  <div id="ui-overlay" class="text-xl">
+    <div id="task">Cargando...</div>
+    <div id="score">Puntuación: 0</div>
+    <div id="level">Nivel: 1</div>
+  </div>
+
+  <!-- Escena A-Frame -->
+  <a-scene vr-mode-ui="enabled: true" physics="driver: ammo">
+    <a-sky color="#87CEEB"></a-sky>
+    
+    <a-camera position="0 1.6 3" wasd-controls-enabled="true" look-controls="true">
+      <a-cursor
+        fuse="false"
+        raycaster="objects: .clickable"
+        geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
+        material="color: black; shader: flat"
+      ></a-cursor>
+    </a-camera>
+    
+    <!-- Figuras que agarramos -->
+    <a-entity id="shape1" class="clickable" grabbable dynamic-body></a-entity>
+    <a-entity id="shape2" class="clickable" grabbable dynamic-body></a-entity>
+  
+    <!-- Zona objetivo para colocar -->
+    <a-plane id="target" position="0 0.5 -5" width="2.2" height="2.2" color="#FFD700" static-body></a-plane>
+    
+    <!-- Suelo -->
+    <a-plane position="0 0 -4" rotation="-90 0 0" width="10" height="10" color="#7CFC00" static-body></a-plane>
+  </a-scene>
+  
+
+  <script src="../../assets/js/games/shape-builder.js"></script>
+
+  <!-- Activar el evento para detectar drop -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const target = document.getElementById('target');
+      target.addEventListener('drag-drop', (e) => {
+        const el = e.detail.dropped;
+        if (el && (el.id === 'shape1' || el.id === 'shape2')) {
+          placeShape(el);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

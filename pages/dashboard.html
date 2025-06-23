@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - Matemáticas Divertidas</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <!-- Fuente divertida y legible -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Fredoka One', cursive;
+      background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      margin: 0;
+    }
+
+    /* Sidebar fixed */
+    #sidebar {
+      height: 100vh;
+      background: #1e3a8a;
+      color: white;
+      width: 280px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      padding-top: 4rem;
+      box-shadow: 4px 0 12px rgba(0,0,0,0.4);
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    #sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+    #sidebar::-webkit-scrollbar-thumb {
+      background-color: #60a5fa;
+      border-radius: 10px;
+    }
+
+    /* Main content margin */
+    #main-content {
+      margin-left: 280px;
+      padding: 5rem 2rem 2rem 2rem;
+      min-height: 100vh;
+      overflow-y: auto;
+    }
+
+    /* Header fixed */
+    header {
+      position: fixed;
+      top: 0;
+      left: 280px;
+      right: 0;
+      height: 4rem;
+      background: #2563eb;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      z-index: 999;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    /* Categorías sidebar */
+    .category {
+      cursor: pointer;
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    .category:hover {
+      background-color: #3b82f6;
+    }
+
+    /* Subcategorías */
+    .subcategory-list {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+      padding-left: 2.5rem;
+    }
+    .subcategory-list.open {
+      max-height: 500px;
+    }
+    .subcategory {
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      font-size: 0.95rem;
+      border-left: 3px solid transparent;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .subcategory:hover {
+      border-color: #60a5fa;
+      background-color: #3b82f6;
+      cursor: pointer;
+    }
+
+    /* Juego card */
+    .game-card {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgb(96 165 250 / 0.4);
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+    }
+    .game-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 25px rgb(96 165 250 / 0.7);
+    }
+
+    /* Animación de brillo suave */
+    .game-card::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(96, 165, 250, 0.4) 50%,
+        transparent 100%
+      );
+      transform: rotate(25deg);
+      animation: shine 4s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes shine {
+      0% {
+        transform: translateX(-100%) rotate(25deg);
+      }
+      100% {
+        transform: translateX(100%) rotate(25deg);
+      }
+    }
+
+    /* Game card content */
+    .game-icon {
+      font-size: 2.5rem;
+      color: #2563eb;
+      margin-bottom: 1rem;
+    }
+    .game-title {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #1e40af;
+      margin-bottom: 0.6rem;
+    }
+    .game-desc {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: #4b5563;
+      flex-grow: 1;
+    }
+    .game-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .stat-item i {
+      color: #3b82f6;
+    }
+
+    /* Categoría título en main */
+    .section-title {
+      font-size: 2rem;
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+      color: #1e40af;
+      text-shadow: 1px 1px 3px rgba(96, 165, 250, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Grid de juegos */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    /* Botón cerrar sesión */
+    #logout-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.5rem 1.5rem;
+      border-radius: 9999px;
+      box-shadow: 0 0 10px #60a5fa;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #logout-btn:hover {
+      background-color: #2563eb;
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #3b82f6;
+    }
+
+    /* Icono flecha para categorías */
+    .arrow {
+      transition: transform 0.3s ease;
+      font-size: 1.2rem;
+      color: #93c5fd;
+    }
+    .arrow.open {
+      transform: rotate(90deg);
+      color: #bfdbfe;
+    }
+
+    /* Animaciones de entrada */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .game-card, .section-title {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+    .game-card:nth-child(2) { animation-delay: 0.1s; }
+    .game-card:nth-child(3) { animation-delay: 0.2s; }
+    .game-card:nth-child(4) { animation-delay: 0.3s; }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside id="sidebar" aria-label="Sidebar navegación">
+    <nav>
+      <div class="category" tabindex="0" aria-expanded="false" aria-controls="cat-matematicas" role="button">
+        <i class="fas fa-calculator"></i> Matemáticas
+        <span class="arrow">▸</span>
+      </div>
+      <div id="cat-matematicas" class="subcategory-list" role="region" aria-hidden="true">
+        <div class="subcategory" tabindex="0" data-section="aritmetica"><i class="fas fa-plus-circle"></i> Aritmética</div>
+        <div class="subcategory" tabindex="0" data-section="geometria"><i class="fas fa-shapes"></i> Geometría</div>
+        <div class="subcategory" tabindex="0" data-section="fracciones"><i class="fas fa-pizza-slice"></i> Fracciones</div>
+      </div>
+
+      <div class="category" tabindex="0" aria-expanded="false" aria-controls="cat-logica" role="button">
+        <i class="fas fa-puzzle-piece"></i> Lógica y Patrones
+        <span class="arrow">▸</span>
+      </div>
+      <div id="cat-logica" class="subcategory-list" role="region" aria-hidden="true">
+        <div class="subcategory" tabindex="0" data-section="patrones"><i class="fas fa-layer-group"></i> Patrones Numéricos</div>
+        <div class="subcategory" tabindex="0" data-section="comparaciones"><i class="fas fa-balance-scale"></i> Comparaciones</div>
+      </div>
+
+      <div class="category" tabindex="0" aria-expanded="false" aria-controls="cat-tiempo" role="button">
+        <i class="fas fa-ruler"></i> Tiempo y Medidas
+        <span class="arrow">▸</span>
+      </div>
+      <div id="cat-tiempo" class="subcategory-list" role="region" aria-hidden="true">
+        <div class="subcategory" tabindex="0" data-section="medidas"><i class="fas fa-weight"></i> Medidas</div>
+        <div class="subcategory" tabindex="0" data-section="tiempo"><i class="fas fa-clock"></i> Tiempo</div>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- Header -->
+  <header>
+    <div class="flex items-center gap-2">
+      <i class="fas fa-gamepad text-2xl"></i>
+      Dashboard - Matemáticas Divertidas
+    </div>
+    <button id="logout-btn" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+    </button>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main-content" tabindex="0" aria-live="polite">
+    <!-- Aquí cargaremos dinámicamente las secciones de juegos -->
+  </main>
+
+  <script>
+    // Juegos con información adicional
+    const juegos = {
+      aritmetica: [
+        { 
+          nombre: 'Caza de Números', 
+          desc: 'Resuelve sumas, restas y multiplicaciones en un mundo virtual.', 
+          url: 'games/number-hunt.html',
+          icon: 'fas fa-calculator',
+          difficulty: 'Fácil',
+          playtime: '5-10 min',
+          popularity: '★★★★☆'
+        },
+        { 
+          nombre: 'Caza de Restas', 
+          desc: 'Encuentra las restas correctas en un mundo 3D.', 
+          url: 'games/subtraction-hunt.html',
+          icon: 'fas fa-minus-circle',
+          difficulty: 'Medio',
+          playtime: '8-12 min',
+          popularity: '★★★☆☆'
+        },
+        { 
+          nombre: 'Batalla de Divisiones', 
+          desc: 'Resuelve divisiones para ganar batallas matemáticas.', 
+          url: 'games/division-battle.html',
+          icon: 'fas fa-divide',
+          difficulty: 'Difícil',
+          playtime: '10-15 min',
+          popularity: '★★★★★'
+        },
+        { 
+          nombre: 'Laberinto de Sumas', 
+          desc: 'Resuelve sumas para avanzar en un laberinto.', 
+          url: 'games/sum-maze.html',
+          icon: 'fas fa-maze',
+          difficulty: 'Medio',
+          playtime: '7-10 min',
+          popularity: '★★★★☆'
+        }
+      ],
+      geometria: [
+        { 
+          nombre: 'Constructor de Figuras', 
+          desc: 'Crea figuras geométricas en 3D y aprende sobre formas.', 
+          url: 'games/shape-builder.html',
+          icon: 'fas fa-cube',
+          difficulty: 'Fácil',
+          playtime: '5-8 min',
+          popularity: '★★★☆☆'
+        }
+      ],
+      fracciones: [
+        { 
+          nombre: 'Aventura de Fracciones', 
+          desc: 'Divide pizzas y pasteles para aprender fracciones.', 
+          url: 'games/fraction-adventure.html',
+          icon: 'fas fa-pizza-slice',
+          difficulty: 'Medio',
+          playtime: '6-9 min',
+          popularity: '★★★★☆'
+        }
+      ],
+      patrones: [
+        { 
+          nombre: 'Tesoro de Patrones', 
+          desc: 'Encuentra el siguiente número en patrones numéricos.', 
+          url: 'games/pattern-treasure.html',
+          icon: 'fas fa-gem',
+          difficulty: 'Difícil',
+          playtime: '10-12 min',
+          popularity: '★★★☆☆'
+        }
+      ],
+      comparaciones: [
+        { 
+          nombre: 'Isla de Comparaciones', 
+          desc: 'Compara números y fracciones en una isla virtual.', 
+          url: 'games/comparison-island.html',
+          icon: 'fas fa-balance-scale',
+          difficulty: 'Fácil',
+          playtime: '5-7 min',
+          popularity: '★★★★☆'
+        }
+      ],
+      medidas: [
+        { 
+          nombre: 'Aventura de Medidas', 
+          desc: 'Aprende sobre longitud y peso midiendo objetos.', 
+          url: 'games/measurement-adventure.html',
+          icon: 'fas fa-ruler-combined',
+          difficulty: 'Medio',
+          playtime: '8-10 min',
+          popularity: '★★★☆☆'
+        }
+      ],
+      tiempo: [
+        { 
+          nombre: 'Desafío del Tiempo', 
+          desc: 'Lee y ajusta relojes para aprender sobre el tiempo.', 
+          url: 'games/time-challenge.html',
+          icon: 'fas fa-clock',
+          difficulty: 'Fácil',
+          playtime: '5-8 min',
+          popularity: '★★★★★'
+        }
+      ]
+    };
+
+    // Referencias DOM
+    const categories = document.querySelectorAll('.category');
+    const mainContent = document.getElementById('main-content');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    // Toggle subcategorías sidebar
+    categories.forEach(cat => {
+      cat.addEventListener('click', () => {
+        const controls = cat.getAttribute('aria-controls');
+        const panel = document.getElementById(controls);
+        const expanded = cat.getAttribute('aria-expanded') === 'true';
+        cat.setAttribute('aria-expanded', !expanded);
+        if (!expanded) {
+          panel.classList.add('open');
+          panel.setAttribute('aria-hidden', 'false');
+          cat.querySelector('.arrow').classList.add('open');
+        } else {
+          panel.classList.remove('open');
+          panel.setAttribute('aria-hidden', 'true');
+          cat.querySelector('.arrow').classList.remove('open');
+        }
+      });
+      cat.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          cat.click();
+        }
+      });
+    });
+
+    // Render juegos para una sección dada
+    function renderSection(sectionKey, sectionTitle, sectionIcon) {
+      mainContent.innerHTML = `
+        <h2 class="section-title">
+          <i class="${sectionIcon}"></i>
+          ${sectionTitle}
+        </h2>
+      `;
+      const grid = document.createElement('div');
+      grid.className = 'games-grid';
+
+      if (juegos[sectionKey] && juegos[sectionKey].length) {
+        juegos[sectionKey].forEach(juego => {
+          const card = document.createElement('a');
+          card.className = 'game-card';
+          card.href = juego.url;
+          card.setAttribute('tabindex', '0');
+          card.innerHTML = `
+            <i class="${juego.icon} game-icon"></i>
+            <h3 class="game-title">${juego.nombre}</h3>
+            <p class="game-desc">${juego.desc}</p>
+            <div class="game-stats">
+              <div class="stat-item"><i class="fas fa-star"></i> Dificultad: ${juego.difficulty}</div>
+              <div class="stat-item"><i class="fas fa-clock"></i> Tiempo: ${juego.playtime}</div>
+              <div class="stat-item"><i class="fas fa-heart"></i> Popularidad: ${juego.popularity}</div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      } else {
+        grid.innerHTML = '<p class="text-center text-lg text-blue-700">No hay juegos en esta categoría.</p>';
+      }
+
+      mainContent.appendChild(grid);
+      mainContent.focus();
+    }
+
+    // Render todas las categorías
+    function renderAll() {
+      mainContent.innerHTML = '';
+      const titleMap = {
+        aritmetica: { title: 'Aritmética', icon: 'fas fa-plus-circle' },
+        geometria: { title: 'Geometría', icon: 'fas fa-shapes' },
+        fracciones: { title: 'Fracciones', icon: 'fas fa-pizza-slice' },
+        patrones: { title: 'Patrones Numéricos', icon: 'fas fa-layer-group' },
+        comparaciones: { title: 'Comparaciones', icon: 'fas fa-balance-scale' },
+        medidas: { title: 'Medidas', icon: 'fas fa-weight' },
+        tiempo: { title: 'Tiempo', icon: 'fas fa-clock' }
+      };
+
+      Object.entries(juegos).forEach(([key, juegosArr]) => {
+        const { title, icon } = titleMap[key] || { title: key, icon: 'fas fa-gamepad' };
+        const section = document.createElement('section');
+        section.innerHTML = `
+          <h2 class="section-title">
+            <i class="${icon}"></i>
+            ${title}
+          </h2>
+        `;
+
+        const grid = document.createElement('div');
+        grid.className = 'games-grid';
+
+        juegosArr.forEach(juego => {
+          const card = document.createElement('a');
+          card.className = 'game-card';
+          card.href = juego.url;
+          card.setAttribute('tabindex', '0');
+          card.innerHTML = `
+            <i class="${juego.icon} game-icon"></i>
+            <h3 class="game-title">${juego.nombre}</h3>
+            <p class="game-desc">${juego.desc}</p>
+            <div class="game-stats">
+              <div class="stat-item"><i class="fas fa-star"></i> Dificultad: ${juego.difficulty}</div>
+              <div class="stat-item"><i class="fas fa-clock"></i> Tiempo: ${juego.playtime}</div>
+              <div class="stat-item"><i class="fas fa-heart"></i> Popularidad: ${juego.popularity}</div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        section.appendChild(grid);
+        mainContent.appendChild(section);
+      });
+      mainContent.focus();
+    }
+
+    // Inicial: Mostrar todos
+    renderAll();
+
+    // Click en subcategoría para mostrar solo esa sección
+    const subcategories = document.querySelectorAll('.subcategory');
+    subcategories.forEach(subcat => {
+      subcat.addEventListener('click', () => {
+        const sectionKey = subcat.getAttribute('data-section');
+        const titleMap = {
+          aritmetica: { title: 'Aritmética', icon: 'fas fa-plus-circle' },
+          geometria: { title: 'Geometría', icon: 'fas fa-shapes' },
+          fracciones: { title: 'Fracciones', icon: 'fas fa-pizza-slice' },
+          patrones: { title: 'Patrones Numéricos', icon: 'fas fa-layer-group' },
+          comparaciones: { title: 'Comparaciones', icon: 'fas fa-balance-scale' },
+          medidas: { title: 'Medidas', icon: 'fas fa-weight' },
+          tiempo: { title: 'Tiempo', icon: 'fas fa-clock' }
+        };
+        const { title, icon } = titleMap[sectionKey];
+        renderSection(sectionKey, title, icon);
+      });
+      subcat.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          subcat.click();
+        }
+      });
+    });
+    function logout() {
+        if (confirm('¿Estás seguro que quieres cerrar sesión?')) {
+          window.location.href = '../index.html';
+        }
+      }
+      
+  </script>
+</body>
+</html>

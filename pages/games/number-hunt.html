@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Caza de Números - Matemáticas en VR</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; }
+    #ui-overlay {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body class="bg-blue-100">
+
+  <div class="absolute top-4 right-4">
+    <a href="../dashboard.html" class="bg-yellow-400 text-blue-800 px-4 py-2 rounded hover:bg-yellow-500">Volver al Dashboard</a>
+  </div>
+
+  <!-- UI -->
+  <div id="ui-overlay" class="text-xl">
+    <div id="problem">Cargando...</div>
+    <div id="score">Puntuación: 0</div>
+    <div id="level">Nivel: 1</div>
+  </div>
+
+  <!-- Escena VR -->
+  <a-scene>
+    <a-sky color="#87CEEB"></a-sky>
+    <a-camera position="0 1.6 0">
+      <a-cursor></a-cursor>
+    </a-camera>
+
+    <!-- Opciones de respuesta -->
+    <a-sphere id="answer1" position="-2 1.5 -5" radius="0.5" color="#FF6347">
+      <a-text id="text1" value="" align="center" position="0 0.6 0" color="white"></a-text>
+    </a-sphere>
+    <a-sphere id="answer2" position="0 1.5 -5" radius="0.5" color="#4682B4">
+      <a-text id="text2" value="" align="center" position="0 0.6 0" color="white"></a-text>
+    </a-sphere>
+    <a-sphere id="answer3" position="2 1.5 -5" radius="0.5" color="#32CD32">
+      <a-text id="text3" value="" align="center" position="0 0.6 0" color="white"></a-text>
+    </a-sphere>
+
+    <!-- Suelo -->
+    <a-plane position="0 0 -4" rotation="-90 0 0" width="10" height="10" color="#7CFC00"></a-plane>
+  </a-scene>
+
+  <script src="../../assets/js/games/number-hunt.js"></script>
+
+  <script>
+    // Añadir listeners una vez cargue todo
+    document.addEventListener('DOMContentLoaded', () => {
+      [1, 2, 3].forEach(i => {
+        const sphere = document.getElementById(`answer${i}`);
+        sphere.addEventListener("click", () => {
+          const val = parseInt(sphere.getAttribute("data-value"));
+          checkAnswer(val);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
