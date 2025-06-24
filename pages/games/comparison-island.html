@@ -1,53 +1,208 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Isla de Comparaciones - Matemáticas en VR</title>
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <script src="https://unpkg.com/aframe-particle-system-component@1.1.3/dist/aframe-particle-system-component.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Isla de Comparaciones 2D</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; }
-    #ui-overlay { 
-      position: absolute; 
-      top: 10px; 
-      left: 10px; 
-      color: white; 
-      background: rgba(0, 0, 0, 0.7); 
-      padding: 10px; 
-      border-radius: 5px; 
+    .card:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s;
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
     }
   </style>
 </head>
-<body class="bg-blue-100">
-  <div class="absolute top-4 right-4">
+<body class="bg-gradient-to-b from-blue-200 to-blue-500 min-h-screen flex flex-col items-center justify-start p-6">
+
+  <!-- Botón volver -->
+  <div class="w-full flex justify-end">
     <a href="../dashboard.html" class="bg-yellow-400 text-blue-800 px-4 py-2 rounded hover:bg-yellow-500">Volver al Dashboard</a>
   </div>
 
-  <div id="ui-overlay" class="text-xl">
-    <div id="task">Cargando...</div>
-    <div id="score">Puntuación: 0</div>
-    <div id="level">Nivel: 1</div>
+  <h1 class="text-3xl font-bold text-white my-6">Isla de Comparaciones</h1>
+
+  <!-- Indicadores -->
+  <div class="bg-white p-4 rounded shadow text-lg mb-6 w-full max-w-md text-center">
+    <div id="task" class="text-xl font-semibold mb-2">Selecciona el número mayor</div>
+    <div id="score" class="text-green-700 font-bold">Puntuación: 0</div>
+    <div id="level" class="text-blue-700 font-bold">Nivel: 1</div>
   </div>
 
-  <a-scene vr-mode-ui="enabled: true">
-    <a-sky color="#87CEEB"></a-sky>
-    <a-camera position="0 1.6 0">
-      <a-cursor></a-cursor>
-    </a-camera>
-    <a-sphere id="comp1" position="-2 1.5 -5" radius="0.5" color="#FF6347" particle-system="preset: dust; color: #FFD700; particleCount: 100">
-      <a-text id="text1" value="" align="center" position="0 0.6 0" color="white"></a-text>
-    </a-sphere>
-    <a-sphere id="comp2" position="0 1.5 -5" radius="0.5" color="#4682B4" particle-system="preset: dust; color: #FFD700; particleCount: 100">
-      <a-text id="text2" value="" align="center" position="0 0.6 0" color="white"></a-text>
-    </a-sphere>
-    <a-sphere id="comp3" position="2 1.5 -5" radius="0.5" color="#32CD32" particle-system="preset: dust; color: #FFD700; particleCount: 100">
-      <a-text id="text3" value="" align="center" position="0 0.6 0" color="white"></a-text>
-    </a-sphere>
-    <a-plane position="0 0 -4" rotation="-90 0 0" width="10" height="10" color="#7CFC00"></a-plane>
-  </a-scene>
+  <!-- Cartas -->
+  <div id="cards" class="grid grid-cols-3 gap-6 max-w-md w-full"></div>
 
-  <script src="../../assets/js/games/comparison-island.js"></script>
+  <!-- Mensaje -->
+  <div id="message" class="text-xl font-bold text-white mt-6 min-h-[2rem]"></div>
+
+  <script>
+    let score = 0;
+    let level = 1;
+
+    const cardsContainer = document.getElementById("cards");
+    const task = document.getElementById("task");
+    const scoreText = document.getElementById("score");
+    const levelText = document.getElementById("level");
+    const message = document.getElementById("message");
+
+    function generarNumeros() {
+      const base = level * 5;
+      let numeros = [
+        Math.floor(Math.random() * base + 1),
+        Math.floor(Math.random() * base + 1),
+        Math.floor(Math.random() * base + 1)
+      ];
+      return numeros;
+    }
+
+    function renderCards() {
+      message.textContent = "";
+      const numeros = generarNumeros();
+      const max = Math.max(...numeros);
+      cardsContainer.innerHTML = "";
+
+      numeros.forEach(num => {
+        const card = document.createElement("div");
+        card.textContent = num;
+        card.className = "card bg-white p-8 rounded shadow-lg text-2xl font-bold text-center cursor-pointer fade-in";
+        card.onclick = () => {
+          if (num === max) {
+            message.textContent = "✅ ¡Correcto!";
+            message.classList.remove("text-red-500");
+            message.classList.add("text-green-300");
+            score += 10;
+            level += 1;
+          } else {
+            message.textContent = "❌ Intenta otra vez";
+            message.classList.remove("text-green-300");
+            message.classList.add("text-red-500");
+            score = Math.max(0, score - 5);
+          }
+          updateStatus();
+          setTimeout(renderCards, 1000);
+        };
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    function updateStatus() {
+      scoreText.textContent = `Puntuación: ${score}`;
+      levelText.textContent = `Nivel: ${level}`;
+    }
+
+    // Inicializar
+    renderCards();
+  </script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Isla de Comparaciones 2D</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s;
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(20px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-blue-200 to-blue-500 min-h-screen flex flex-col items-center justify-start p-6">
+
+  <!-- Botón volver -->
+  <div class="w-full flex justify-end">
+    <a href="../dashboard.html" class="bg-yellow-400 text-blue-800 px-4 py-2 rounded hover:bg-yellow-500">Volver al Dashboard</a>
+  </div>
+
+  <h1 class="text-3xl font-bold text-white my-6">Isla de Comparaciones</h1>
+
+  <!-- Indicadores -->
+  <div class="bg-white p-4 rounded shadow text-lg mb-6 w-full max-w-md text-center">
+    <div id="task" class="text-xl font-semibold mb-2">Selecciona el número mayor</div>
+    <div id="score" class="text-green-700 font-bold">Puntuación: 0</div>
+    <div id="level" class="text-blue-700 font-bold">Nivel: 1</div>
+  </div>
+
+  <!-- Cartas -->
+  <div id="cards" class="grid grid-cols-3 gap-6 max-w-md w-full"></div>
+
+  <!-- Mensaje -->
+  <div id="message" class="text-xl font-bold text-white mt-6 min-h-[2rem]"></div>
+
+  <script>
+    let score = 0;
+    let level = 1;
+
+    const cardsContainer = document.getElementById("cards");
+    const task = document.getElementById("task");
+    const scoreText = document.getElementById("score");
+    const levelText = document.getElementById("level");
+    const message = document.getElementById("message");
+
+    function generarNumeros() {
+      const base = level * 5;
+      let numeros = [
+        Math.floor(Math.random() * base + 1),
+        Math.floor(Math.random() * base + 1),
+        Math.floor(Math.random() * base + 1)
+      ];
+      return numeros;
+    }
+
+    function renderCards() {
+      message.textContent = "";
+      const numeros = generarNumeros();
+      const max = Math.max(...numeros);
+      cardsContainer.innerHTML = "";
+
+      numeros.forEach(num => {
+        const card = document.createElement("div");
+        card.textContent = num;
+        card.className = "card bg-white p-8 rounded shadow-lg text-2xl font-bold text-center cursor-pointer fade-in";
+        card.onclick = () => {
+          if (num === max) {
+            message.textContent = "✅ ¡Correcto!";
+            message.classList.remove("text-red-500");
+            message.classList.add("text-green-300");
+            score += 10;
+            level += 1;
+          } else {
+            message.textContent = "❌ Intenta otra vez";
+            message.classList.remove("text-green-300");
+            message.classList.add("text-red-500");
+            score = Math.max(0, score - 5);
+          }
+          updateStatus();
+          setTimeout(renderCards, 1000);
+        };
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    function updateStatus() {
+      scoreText.textContent = `Puntuación: ${score}`;
+      levelText.textContent = `Nivel: ${level}`;
+    }
+
+    // Inicializar
+    renderCards();
+  </script>
+
 </body>
 </html>
