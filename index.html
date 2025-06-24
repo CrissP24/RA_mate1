@@ -20,28 +20,25 @@
       overflow-x: hidden;
     }
 
-    /* Smooth scroll */
     html {
       scroll-behavior: smooth;
     }
 
-    /* Hero section animation */
     .hero {
       background: linear-gradient(to bottom, rgba(37, 99, 235, 0.9), rgba(96, 165, 250, 0.7)),
                   url('https://source.unsplash.com/random/1600x900/?math') no-repeat center/cover;
       animation: fadeIn 1s ease-out;
     }
 
-    /* Card animations */
     .game-card {
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
     .game-card:hover {
       transform: translateY(-10px);
       box-shadow: 0 10px 25px rgba(96, 165, 250, 0.7);
     }
 
-    /* Shine effect for cards */
     .game-card::before {
       content: '';
       position: absolute;
@@ -70,15 +67,18 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Fade-in for sections */
+    .animate-fadeIn {
+      animation: fadeIn 1s ease-out;
+    }
+
     section {
       animation: fadeIn 0.8s ease-out;
     }
 
-    /* Scrollbar styling */
     ::-webkit-scrollbar {
       width: 8px;
     }
+
     ::-webkit-scrollbar-thumb {
       background-color: #60a5fa;
       border-radius: 10px;
@@ -86,6 +86,26 @@
   </style>
 </head>
 <body>
+
+  <!-- Intro Section: Proyecto VR Matemáticas - UE 15 de Octubre -->
+  <section class="bg-white py-16 px-6 md:px-12 text-center shadow-md relative z-40 animate-fadeIn">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-blue-700 mb-4">
+        🎓 Realidad Virtual en Matemáticas - UE 15 de Octubre
+      </h2>
+      <p class="text-gray-700 text-lg md:text-xl leading-relaxed mb-4">
+        Bienvenidos a nuestro proyecto de integración de la realidad virtual en la enseñanza de las matemáticas
+        en la <strong>Unidad Educativa 15 de Octubre</strong>. Este enfoque innovador busca transformar la manera
+        en que los estudiantes interactúan con conceptos matemáticos complejos, haciéndolos más accesibles y dinámicos.
+      </p>
+      <p class="text-gray-700 text-lg md:text-xl leading-relaxed">
+        Utilizamos herramientas de realidad virtual para visualizar <strong>figuras geométricas en 3D</strong>,
+        simular problemas de <strong>álgebra</strong> y explorar conceptos de <strong>cálculo</strong> de una manera inmersiva.
+        Nuestro objetivo es <span class="text-blue-600 font-semibold">mejorar la comprensión y el interés</span> de los estudiantes en las matemáticas.
+      </p>
+    </div>
+  </section>
+
   <!-- Header -->
   <header class="bg-blue-600 text-white fixed top-0 left-0 right-0 z-50 shadow-lg">
     <div class="container mx-auto flex justify-between items-center p-4">
@@ -122,7 +142,7 @@
       <i class="fas fa-star text-yellow-400 mr-2"></i> Características Principales
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- Game Card 1 -->
+      <!-- Game Cards -->
       <div class="game-card bg-white rounded-lg shadow-lg p-6 relative overflow-hidden">
         <i class="fas fa-calculator text-4xl text-blue-600 mb-4"></i>
         <h3 class="text-xl font-bold text-blue-600 mb-2">Juegos Interactivos</h3>
@@ -134,7 +154,6 @@
           <i class="fas fa-star"></i> Popularidad: ★★★★☆
         </div>
       </div>
-      <!-- Game Card 2 -->
       <div class="game-card bg-white rounded-lg shadow-lg p-6 relative overflow-hidden">
         <i class="fas fa-vr-cardboard text-4xl text-blue-600 mb-4"></i>
         <h3 class="text-xl font-bold text-blue-600 mb-2">Realidad Virtual</h3>
@@ -146,7 +165,6 @@
           <i class="fas fa-star"></i> Popularidad: ★★★★★
         </div>
       </div>
-      <!-- Game Card 3 -->
       <div class="game-card bg-white rounded-lg shadow-lg p-6 relative overflow-hidden">
         <i class="fas fa-smile text-4xl text-blue-600 mb-4"></i>
         <h3 class="text-xl font-bold text-blue-600 mb-2">Diseño Amigable</h3>
@@ -172,7 +190,7 @@
           <li><strong>Inicia Sesión:</strong> Usa tu cuenta para acceder al dashboard.</li>
           <li><strong>Elige un Juego:</strong> Selecciona entre sumas, fracciones, geometría y más.</li>
           <li><strong>Explora en VR:</strong> Usa un navegador compatible con WebXR (Chrome, Firefox).</li>
-          <li><strong>¡D maticas!</strong> Aprende mientras te diviertes en entornos interactivos.</li>
+          <li><strong>¡Diviértete con las Matemáticas!</strong> Aprende mientras juegas.</li>
         </ol>
       </div>
       <div class="text-gray-700">
@@ -223,7 +241,6 @@
   </footer>
 
   <script>
-    // Smooth scroll for nav links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function(e) {
         e.preventDefault();
@@ -233,10 +250,8 @@
       });
     });
 
-    // Placeholder logout function (for dashboard integration)
     async function logout() {
       try {
-        // Notify backend to invalidate session (adjust endpoint as needed)
         const response = await fetch('/api/logout', {
           method: 'POST',
           headers: {
@@ -250,12 +265,10 @@
           throw new Error('Error al cerrar sesión');
         }
 
-        // Clear client-side session data
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         sessionStorage.clear();
 
-        // Redirect to login page
         window.location.href = 'pages/login.html';
       } catch (error) {
         console.error('Error durante el logout:', error);
