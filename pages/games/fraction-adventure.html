@@ -3,160 +3,264 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Juego de Fracciones con Pizza</title>
+<title>Juego de Fracciones - Pizza</title>
 <style>
   body {
+    margin: 0; padding: 20px;
     font-family: Arial, sans-serif;
-    background: #f0fff4;
-    text-align: center;
-    padding: 20px;
+    background: #fff8dc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
   h1 {
-    color: #007A33;
+    color: #d35400;
+    margin-bottom: 10px;
   }
-  .pizza-container {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    margin: 20px auto;
+  #top-bar {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  #pizza-container {
+    margin: 20px 0;
+  }
+  svg {
+    width: 320px;
+    height: 320px;
   }
   .slice {
-    position: absolute;
-    width: 50%;
-    height: 50%;
-    background: #ffcc80;
-    border: 2px solid #e65100;
-    border-radius: 100% 0 0 0 / 100% 0 0 0;
-    transform-origin: bottom right;
     cursor: pointer;
-    transition: background 0.3s ease;
+    stroke: #d35400;
+    stroke-width: 2px;
+    transition: transform 0.2s;
   }
-  .slice.active {
-    background: #ff5722;
+  .slice:hover {
+    transform: scale(1.05);
   }
-  .options {
+  .filled {
+    fill: #e67e22;
+  }
+  .empty {
+    fill: #f9e79f;
+  }
+  #options {
+    display: flex;
+    gap: 15px;
     margin-top: 20px;
   }
-  button {
-    margin: 0 10px;
-    font-size: 18px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background: #007A33;
+  .option {
+    background-color: #d35400;
     color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    font-weight: bold;
+    user-select: none;
+    transition: background-color 0.3s;
   }
-  button:hover {
-    background: #004d1a;
+  .option:hover {
+    background-color: #e67e22;
   }
   #message {
     margin-top: 20px;
-    font-size: 20px;
+    font-size: 1.3rem;
+    min-height: 30px;
+  }
+  #scoreboard {
+    margin-top: 10px;
     font-weight: bold;
+    color: #d35400;
+  }
+  button#next, button#back {
+    margin-top: 15px;
+    padding: 8px 15px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    background-color: #d35400;
+    color: white;
+    cursor: pointer;
+  }
+  button#next:hover, button#back:hover {
+    background-color: #e67e22;
   }
 </style>
 </head>
 <body>
 
-<h1>¿Qué fracción representa la pizza pintada?</h1>
+<div id="top-bar">
+  <h1>¿Qué fracción representa la parte pintada?</h1>
+  <button id="back" onclick="location.href='dashboard.html'">Regresar</button>
+</div>
 
-<div class="pizza-container" id="pizza"></div>
+<div id="pizza-container"></div>
 
-<div class="options" id="options"></div>
+<div id="options"></div>
 
 <div id="message"></div>
 
+<div id="scoreboard">Puntuación: 0</div>
+
+<button id="next" style="display:none;">Siguiente pregunta</button>
+
 <script>
-  // Parámetros del juego
-  const totalSlicesOptions = [4, 6, 8];
-  let totalSlices, paintedSlices;
+  let score = 0;
+  let currentQuestion = 0;
 
-  const pizzaContainer = document.getElementById('pizza');
+  const questions = [
+    {total: 8, painted: 3},
+    {total: 4, painted: 1},
+    {total: 6, painted: 2},
+    {total: 12, painted: 5},
+    {total: 10, painted: 4}
+  ];
+
+  const pizzaContainer = document.getElementById('pizza-container');
   const optionsContainer = document.getElementById('options');
-  const message = document.getElementById('message');
+  const messageElem = document.getElementById('message');
+  const scoreboard = document.getElementById('scoreboard');
+  const nextBtn = document.getElementById('next');
 
-  // Crear el pizza div con las porciones
-  function crearPizza(total, pintadas) {
+  function drawPizza(totalSlices, paintedSlices) {
     pizzaContainer.innerHTML = '';
-    // Ángulo por cada slice
-    const anguloSlice = 360 / total;
+    const svgNS = "http://www.w3.org/2000/svg";
+    const size = 320;
+    const cx = size / 2;
+    const cy = size / 2;
+    const r = size / 2 - 10;
 
-    for(let i=0; i < total; i++) {
-      const slice = document.createElement('div');
-      slice.classList.add('slice');
-      // rotar cada slice para posicionarla
-      slice.style.transform = `rotate(${i * anguloSlice}deg) skewY(-${90 - anguloSlice}deg)`;
-      // Pintar si es slice pintada
-      if(i < pintadas) {
-        slice.classList.add('active');
+    const svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute('width', size);
+    svg.setAttribute('height', size);
+
+    for (let i = 0; i < totalSlices; i++) {
+      const slice = document.createElementNS(svgNS, 'path');
+      const startAngle = (i / totalSlices) * 2 * Math.PI - Math.PI / 2;
+      const endAngle = ((i + 1) / totalSlices) * 2 * Math.PI - Math.PI / 2;
+      const x1 = cx + r * Math.cos(startAngle);
+      const y1 = cy + r * Math.sin(startAngle);
+      const x2 = cx + r * Math.cos(endAngle);
+      const y2 = cy + r * Math.sin(endAngle);
+
+      const d = [
+        `M ${cx} ${cy}`,
+        `L ${x1} ${y1}`,
+        `A ${r} ${r} 0 0 1 ${x2} ${y2}`,
+        'Z'
+      ].join(' ');
+
+      slice.setAttribute('d', d);
+      slice.setAttribute('class', 'slice');
+
+      if (i < paintedSlices) {
+        slice.classList.add('filled');
+      } else {
+        slice.classList.add('empty');
       }
-      pizzaContainer.appendChild(slice);
+
+      svg.appendChild(slice);
     }
+
+    pizzaContainer.appendChild(svg);
   }
 
-  // Crear opciones de fracción para que el usuario escoja
-  function crearOpciones(correcta, total) {
-    optionsContainer.innerHTML = '';
+  function generateOptions(painted, total) {
+    const correct = simplifyFraction(painted, total);
+    let options = [correct];
 
-    // Opción correcta
-    const correctaBtn = document.createElement('button');
-    correctaBtn.textContent = `${correcta}/${total}`;
-    correctaBtn.onclick = () => verificarRespuesta(true);
+    while (options.length < 3) {
+      let num = painted + getRandomInt(-2, 2);
+      let den = total + getRandomInt(-2, 2);
+      if (den <= 0) den = total;
+      if (num < 0) num = painted;
+      if (num > den) num = den;
 
-    // Otras opciones incorrectas (3 más)
-    const opciones = new Set();
-    opciones.add(`${correcta}/${total}`);
+      const frac = simplifyFraction(num, den);
 
-    while (opciones.size < 4) {
-      const num = Math.floor(Math.random() * total) + 1;
-      if(num !== correcta) {
-        opciones.add(`${num}/${total}`);
+      if (!options.some(o => o.n === frac.n && o.d === frac.d)) {
+        options.push(frac);
       }
     }
 
-    // Mezclar opciones
-    const listaOpciones = Array.from(opciones).sort(() => Math.random() - 0.5);
+    options = shuffleArray(options);
 
-    listaOpciones.forEach(opcion => {
-      const btn = document.createElement('button');
-      btn.textContent = opcion;
+    return options;
+  }
+
+  function simplifyFraction(num, den) {
+    const gcdVal = gcd(num, den);
+    return {n: num / gcdVal, d: den / gcdVal, text: `${num / gcdVal}/${den / gcdVal}`};
+  }
+
+  function gcd(a, b) {
+    if (!b) return a;
+    return gcd(b, a % b);
+  }
+
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function shuffleArray(arr) {
+    for(let i = arr.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  function showOptions(options, correct) {
+    optionsContainer.innerHTML = '';
+    options.forEach(opt => {
+      const btn = document.createElement('div');
+      btn.classList.add('option');
+      btn.textContent = opt.text;
       btn.onclick = () => {
-        if(opcion === `${correcta}/${total}`) {
-          verificarRespuesta(true);
+        if(opt.n === correct.n && opt.d === correct.d){
+          messageElem.textContent = '¡Correcto! 🎉';
+          score += 10;
         } else {
-          verificarRespuesta(false);
+          messageElem.textContent = `Incorrecto. La respuesta correcta es ${correct.text}`;
+          score -= 5;
         }
-      }
+        scoreboard.textContent = `Puntuación: ${score}`;
+        nextBtn.style.display = 'inline-block';
+        Array.from(optionsContainer.children).forEach(c => c.onclick = null);
+      };
       optionsContainer.appendChild(btn);
     });
   }
 
-  // Verificar respuesta
-  function verificarRespuesta(acertado) {
-    if(acertado) {
-      message.textContent = '¡Correcto! 🎉';
-      message.style.color = '#007A33';
-    } else {
-      message.textContent = 'Incorrecto. Intenta de nuevo.';
-      message.style.color = '#d32f2f';
+  function nextQuestion() {
+    messageElem.textContent = '';
+    nextBtn.style.display = 'none';
+
+    if(currentQuestion >= questions.length){
+      alert('Juego terminado! Tu puntuación final es: ' + score);
+      currentQuestion = 0;
+      score = 0;
+      scoreboard.textContent = `Puntuación: ${score}`;
     }
+
+    const q = questions[currentQuestion];
+    drawPizza(q.total, q.painted);
+
+    const correct = simplifyFraction(q.painted, q.total);
+    const opts = generateOptions(q.painted, q.total);
+    showOptions(opts, correct);
+
+    currentQuestion++;
   }
 
-  // Iniciar juego con valores aleatorios
-  function iniciarJuego() {
-    message.textContent = '';
-    // escoger total slices y pintadas
-    totalSlices = totalSlicesOptions[Math.floor(Math.random() * totalSlicesOptions.length)];
-    paintedSlices = Math.floor(Math.random() * (totalSlices - 1)) + 1; // entre 1 y totalSlices-1
+  nextBtn.addEventListener('click', nextQuestion);
 
-    crearPizza(totalSlices, paintedSlices);
-    crearOpciones(paintedSlices, totalSlices);
-  }
+  // Comenzar juego
+  nextQuestion();
 
-  // Lanzar el juego
-  iniciarJuego();
 </script>
 
 </body>
