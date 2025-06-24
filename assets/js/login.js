@@ -1,5 +1,11 @@
 let isLogin = true;
 
+// Usuario predeterminado (modo local)
+const defaultUser = {
+  username: 'admin',
+  password: '1234'
+};
+
 function toggleForm() {
   isLogin = !isLogin;
   document.getElementById('form-title').textContent = isLogin ? 'Iniciar Sesión' : 'Registrarse';
@@ -9,9 +15,17 @@ function toggleForm() {
 }
 
 async function handleAction() {
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
   const error = document.getElementById('error');
+
+  // Validación para login local (sin servidor)
+  if (isLogin && username === defaultUser.username && password === defaultUser.password) {
+    localStorage.setItem('usuario', username);
+    window.location.href = 'dashboard.html';
+    return;
+  }
+
   const url = isLogin ? 'http://localhost:5000/api/auth/login' : 'http://localhost:5000/api/auth/register';
 
   try {
@@ -35,7 +49,7 @@ async function handleAction() {
       }
     } else {
       error.classList.remove('hidden');
-      error.textContent = data.error;
+      error.textContent = data.error || 'Credenciales incorrectas';
     }
   } catch (err) {
     error.classList.remove('hidden');
@@ -46,5 +60,5 @@ async function handleAction() {
 function loginAsGuest() {
   const username = 'niño1';
   localStorage.setItem('usuario', username);
-  window.location.href = 'dashboard.html'; // Asegúrate que este archivo exista
+  window.location.href = 'dashboard.html';
 }
