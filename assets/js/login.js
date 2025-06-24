@@ -20,14 +20,17 @@ async function handleAction() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
+
     const data = await response.json();
+
     if (response.ok) {
       if (isLogin) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('usuario', username);
         window.location.href = 'dashboard.html';
       } else {
-        document.getElementById('error').classList.remove('hidden');
-        document.getElementById('error').textContent = '¡Usuario registrado! Ahora inicia sesión.';
+        error.classList.remove('hidden');
+        error.textContent = '¡Usuario registrado! Ahora inicia sesión.';
         toggleForm();
       }
     } else {
@@ -38,4 +41,10 @@ async function handleAction() {
     error.classList.remove('hidden');
     error.textContent = 'Error de conexión';
   }
+}
+
+function loginAsGuest() {
+  const username = 'niño1';
+  localStorage.setItem('usuario', username);
+  window.location.href = 'dashboard.html'; // Asegúrate que este archivo exista
 }
